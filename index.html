@@ -90,7 +90,7 @@ body.play #hud{opacity:1}
 #leaves{position:absolute;left:8.5%;top:10.17%;width:82.9%;height:75.3%;perspective:2400px;touch-action:none;cursor:grab}
 .leaf{position:absolute;inset:0;container-type:inline-size;background:var(--pg) 49.7% 41.2%/120.6% auto no-repeat;
   transform-origin:0 50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:transform;
-  transition:transform 1.25s cubic-bezier(.55,.05,.2,1),filter 1.25s ease}
+  transition:transform 2.4s cubic-bezier(.45,.05,.25,1),filter 2.4s ease}
 .leaf.turned{transform:rotateY(-178deg);filter:brightness(.45);pointer-events:none}
 .inner{position:absolute;inset:0;padding: 13cqw 9cqw 13cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .frame{position:absolute;inset:calc(0px + 4.4cqw) 4cqw calc(0px + 4.4cqw);border:.32cqw solid rgba(70,46,18,.5);pointer-events:none}
@@ -602,12 +602,16 @@ const LEAVES = [
 `<section class="leaf hascurl" data-p="2">${frame}
   <svg class="fps" aria-hidden="true"><g id="sparks"></g><g id="steps"></g></svg>
   <div class="inner">
-    <svg class="orn rv" style="width:11cqw;height:11cqw"><use href="#compass"/></svg><div class="gap"></div>
+    <svg class="orn rv" style="width:9cqw;height:9cqw"><use href="#compass"/></svg><div class="gap"></div>
     <div class="addr">
-      ${rv('<div class="ttl">Onde a magia</div>')}
-      ${rv('<div class="ttl">acontece</div>')}
+      ${rv('<div class="it s">Tentei reservar uma noite</div>')}
+      ${rv('<div class="it s">nos Três Vassouras, mas a</div>')}
+      ${rv('<div class="it s">agenda deles estava cheia…</div>')}
       <div class="gap"></div>${divider}<div class="gap"></div>
-      ${rv(`<div class="it">${C.local}</div>`)}
+      ${rv('<div class="it s">Então o nosso Banquete de</div>')}
+      ${rv('<div class="it s">Halloween será aqui:</div>')}
+      <div class="gap"></div>
+      ${rv(`<div class="ttl" style="font-size:9cqw">${C.local}</div>`)}
       ${C.endereco?rv(`<div class="it s">${C.endereco}</div>`):''}
       ${C.cidade?rv(`<div class="it s">${C.cidade}</div>`):''}
       <a class="pill fade" href="${mapsUrl}" target="_blank" rel="noopener">Ver no mapa</a>
@@ -615,7 +619,7 @@ const LEAVES = [
     <div class="it hint rv" id="hint">siga as pegadas…</div>
   </div>${backBtn}${curl}</section>`,
 
-`<section class="leaf last" data-p="3">${frame}<div class="inner list">
+`<section class="leaf hascurl" data-p="3">${frame}<div class="inner list">
   ${orn}<div class="gap"></div>
   ${rv('<div class="ttl">Dicas para</div>')}
   ${rv('<div class="ttl">presentear</div>')}
@@ -626,6 +630,23 @@ const LEAVES = [
   <div class="gap2"></div>${divider}<div class="gap"></div>
   ${rv('<div class="it s">Sua presença já é</div>')}
   ${rv('<div class="it s">o maior presente.</div>')}
+</div>${backBtn}${curl}</section>`,
+
+`<section class="leaf last" data-p="4">${frame}<div class="inner">
+  ${orn}<div class="gap"></div>
+  ${rv('<div class="ttl">Até lá…</div>')}
+  <div class="gap"></div>${divider}<div class="gap"></div>
+  ${rv('<div class="it">Venha vestido de bruxo ou bruxa,</div>')}
+  ${rv('<div class="it">traga sua varinha e seu melhor</div>')}
+  ${rv('<div class="it">feitiço, e prepare-se para uma</div>')}
+  ${rv('<div class="it">noite de doces, risadas e magia.</div>')}
+  <div class="gap2"></div>
+  ${rv('<div class="it s">Obrigado por fazer parte</div>')}
+  ${rv('<div class="it s">da minha história.</div>')}
+  <div class="gap"></div>${divider}<div class="gap"></div>
+  ${rv(`<div class="ttl" style="font-size:10cqw">${C.nome}</div>`)}
+  <div class="gap"></div>
+  ${rv('<div class="it s">Malfeito feito.</div>')}
 </div>${backBtn}</section>`
 ];
 const lv = $('#leaves');
@@ -705,7 +726,7 @@ const RUN = [
   async leaf => { await sleep(300); await reveal(leaf, '.rv'); showCurl(leaf); },
   async leaf => {
     await sleep(300);
-    let saved = null; try { saved = localStorage.getItem('rsvp_nome'); } catch(e){}
+    let saved = null;
     await reveal(leaf, '.rv');
     if (saved){ showDone(saved, true); showCurl(leaf); return; }
     leaf.querySelector('#rsvp').classList.add('on'); await sleep(600);
@@ -720,6 +741,7 @@ const RUN = [
     await sleep(500); leaf.querySelector('#hint').classList.add('gone'); await sleep(700);
     await reveal(leaf, '.addr .rv'); leaf.querySelector('.pill').classList.add('on'); showCurl(leaf);
   },
+  async leaf => { await sleep(300); await reveal(leaf, '.rv'); showCurl(leaf); },
   async leaf => { await sleep(300); await reveal(leaf, '.rv'); }
 ];
 const ran = {};
@@ -727,8 +749,8 @@ function enter(i){ if (ran[i]) return; ran[i] = 1; RUN[i](leaves[i]); }
 
 /* ---------- navegação ---------- */
 let idx = 0, busy = false;
-const lock = () => { busy = true; setTimeout(() => busy = false, 950); };
-function turn(){ if (busy || idx >= N-1 || !$('#sBook').classList.contains('on')) return; lock(); leaves[idx].classList.add('turned'); idx++; setTimeout(() => enter(idx), 450); }
+const lock = () => { busy = true; setTimeout(() => busy = false, 2300); };
+function turn(){ if (busy || idx >= N-1 || !$('#sBook').classList.contains('on')) return; lock(); leaves[idx].classList.add('turned'); idx++; setTimeout(() => enter(idx), 1100); }
 function back(){ if (busy || idx <= 0) return; lock(); idx--; leaves[idx].classList.remove('turned'); }
 const bookOn = () => $('#sBook').classList.contains('on');
 let drag = null;
@@ -790,7 +812,6 @@ rbtn.addEventListener('click', () => {
   const nome = rname.value.trim().replace(/\s+/g,' ');
   if (nome.length < 2){ rsvpBox.classList.remove('nudge'); void rsvpBox.offsetWidth; rsvpBox.classList.add('nudge'); rname.focus(); return; }
   rname.blur();
-  try { localStorage.setItem('rsvp_nome', nome); } catch(e){}
   if (C.whatsapp) window.open('https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent(C.mensagemWhats.replace('{nome}', nome)), '_blank', 'noopener');
   if (C.rsvpUrl){ try { fetch(C.rsvpUrl, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({nome, quando: new Date().toISOString(), evento: 'Aniversário de ' + C.nome})}); } catch(e){} }
   showDone(nome);
