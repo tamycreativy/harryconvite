@@ -72,10 +72,17 @@ body.play #hud{opacity:1}
 #sig i.ok{background:var(--g);border-color:var(--g);box-shadow:0 0 12px var(--g)}
 #msg{position:absolute;left:var(--pad);right:var(--pad);bottom:4cqw;text-align:center;font-style:italic;font-size:4.6cqw;color:#f1ead6;text-shadow:0 2px 14px #000,0 0 24px #000;padding:0 6cqw;min-height:2.6em;opacity:0;transition:opacity .6s;pointer-events:none;z-index:4}
 #msg.v{opacity:1}
+#stage.asking #msg{bottom:21cqw}
+#choice{position:absolute;left:var(--pad);right:var(--pad);bottom:5.5cqw;text-align:center;z-index:5;padding:0 6cqw;opacity:0;pointer-events:none;transition:opacity .8s ease;
+  font-style:italic;font-size:4.6cqw;line-height:1.5;color:var(--g);text-shadow:0 2px 4px #000,0 0 10px #000,0 0 22px #000}
+#choice.v{opacity:1;pointer-events:auto}
+#choice button{background:none;border:0;padding:1.2cqw 2cqw;font:inherit;color:inherit;text-shadow:inherit;text-decoration:underline;text-underline-offset:.9cqw;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#choice .sl{opacity:.7}
 
 /* pular */
 #pular{position:absolute;top:2.4cqw;right:calc(2.6cqw + var(--pad));z-index:40;background:none;border:1px solid rgba(216,180,106,.28);color:rgba(233,228,214,.55);
   font-family:Cinzel,serif;font-size:2.5cqw;letter-spacing:.18em;text-transform:uppercase;padding:1.2cqw 2.4cqw;border-radius:2px;cursor:pointer;transition:opacity .6s,color .3s,border-color .3s}
+#pular{display:none !important}
 #pular:hover{color:#fff;border-color:var(--gold)}
 #pular.hide{opacity:0;pointer-events:none}
 
@@ -240,6 +247,7 @@ body.skip #hud{opacity:0}
     <canvas id="dust"></canvas>
     <div id="hud"><div class="t" id="rt">Rodada 1 de 3</div><div id="sig"><i></i><i></i><i></i></div></div>
     <div id="msg"></div>
+    <div id="choice"><div>Deseja tentar novamente ou ir para as informações?</div><div><button type="button" id="cTry">tentar</button> <span class="sl">/</span> <button type="button" id="cInfo">informações</button></div></div>
     <div id="intro">
       <p>Você está prestes a entrar em um mundo onde a magia é real.</p>
       <p class="em">Mas nem toda porta se abre para qualquer um…</p>
@@ -465,10 +473,19 @@ async function tap(i){
     phase = 'lock'; setReady(false);
     lightUp(i, 0, true); tone(i, 'bad'); setTimeout(() => lightOff(i, 500), 600);
     $('#doorWrap').classList.remove('shake'); void $('#doorWrap').offsetWidth; $('#doorWrap').classList.add('shake');
-    msg('As serpentes não reconhecem você. Observe de novo…');
-    await sleep(1800); newSeq(); playRound();
+    msg('As serpentes não reconhecem você…');
+    await sleep(1700); if (skipped) return;
+    stage.classList.add('asking'); $('#choice').classList.add('v');
   }
 }
+
+function closeChoice(){ $('#choice').classList.remove('v'); stage.classList.remove('asking'); }
+$('#cTry').addEventListener('click', async () => {
+  if (skipped || !$('#choice').classList.contains('v')) return;
+  closeChoice(); msg(null); round = 0; document.querySelectorAll('#sig i').forEach(i => i.classList.remove('ok'));
+  await sleep(700); if (skipped) return; newSeq(); playRound();
+});
+$('#cInfo').addEventListener('click', () => { if (!$('#choice').classList.contains('v')) return; closeChoice(); $('#pular').click(); });
 
 /* ---------- a porta se abre (vídeo pré-carregado) ---------- */
 const vid = $('#vid');
