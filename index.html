@@ -482,7 +482,7 @@ async function tap(i){
 function closeChoice(){ $('#choice').classList.remove('v'); stage.classList.remove('asking'); }
 $('#cTry').addEventListener('click', async () => {
   if (skipped || !$('#choice').classList.contains('v')) return;
-  closeChoice(); msg(null); round = 0; document.querySelectorAll('#sig i').forEach(i => i.classList.remove('ok'));
+  closeChoice(); msg(null);   // repete só a rodada em que errou
   await sleep(700); if (skipped) return; newSeq(); playRound();
 });
 $('#cInfo').addEventListener('click', () => { if (!$('#choice').classList.contains('v')) return; closeChoice(); $('#pular').click(); });
